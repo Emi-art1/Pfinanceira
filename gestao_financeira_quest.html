@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Contabilidade Quest — Aprenda Gestão Financeira e Contabilidade jogando!">
+<title>💰 Contabilidade Quest — Gestão Financeira</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap');
+:root{
+  --bg:#050f0a;--surface:#0a1f14;--surface2:#112a1c;--surface3:#1a3d28;
+  --border:#1e4d30;--border2:#2e7048;
+  --gold:#22d66e;--gold-dark:#0e7a38;--gold-glow:#22d66e33;
+  --red:#ff5c5c;--green:#22d66e;--blue:#4aeaab;--purple:#a8f0c8;
+  --text:#d8fff0;--muted:#6ba882;--r:14px;--r-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+.pixel{font-family:'Press Start 2P',monospace}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,#0a3d1e55 0%,transparent 70%),radial-gradient(1.5px 1.5px at 15% 25%,#22d66e44 0%,transparent 100%),radial-gradient(1px 1px at 60% 15%,#22d66e33 0%,transparent 100%),radial-gradient(1px 1px at 80% 80%,#4aeaab22 0%,transparent 100%)}
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+.pixel{font-family:'Press Start 2P',monospace}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 32px;border-radius:var(--r-sm);font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:.5px;transition:transform .12s,box-shadow .12s;position:relative;top:0;user-select:none}
+.btn:active{top:3px!important}
+.btn-gold{background:var(--gold);color:#021408;box-shadow:0 5px 0 var(--gold-dark),0 0 30px var(--gold-glow)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--gold-dark),0 0 50px var(--gold-glow)}
+.btn-blue{background:var(--blue);color:#021408;box-shadow:0 5px 0 #0e7a5c}
+.btn-blue:hover{transform:translateY(-2px)}
+.btn-green{background:var(--green);color:#021408;box-shadow:0 5px 0 #0e7a38}
+.btn-green:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--muted);border:2px solid var(--border);box-shadow:none}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:none}
+.btn-sm{padding:10px 20px;font-size:9px}
+.btn-lg{padding:18px 44px;font-size:13px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface);border-bottom:2px solid var(--border);gap:12px;flex-wrap:wrap}
+.topbar-brand{font-size:clamp(7px,1.6vw,11px);color:var(--gold)}
+.xp-pill{display:flex;align-items:center;gap:8px;background:var(--surface2);border:2px solid var(--gold);border-radius:50px;padding:7px 18px;font-size:14px;font-weight:900;color:var(--gold)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 #22d66e44}50%{box-shadow:0 0 0 7px #22d66e00}}
+#intro{align-items:center;justify-content:center;text-align:center;padding:40px 20px;background:radial-gradient(ellipse 100% 70% at 50% 20%,#0a3d1e 0%,var(--bg) 70%)}
+.intro-mascot{font-size:72px;display:block;animation:bounce 1.4s ease-in-out infinite;margin-bottom:20px}
+.intro-title{font-size:clamp(18px,4vw,36px);color:var(--gold);text-shadow:0 0 50px #22d66e55,3px 3px 0 #052410;line-height:1.7;margin-bottom:12px}
+.intro-tagline{font-size:clamp(12px,2vw,16px);color:var(--muted);margin-bottom:36px;font-weight:800}
+.intro-badges{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.badge{background:var(--surface2);border:2px solid var(--border);border-radius:50px;padding:8px 18px;font-size:13px;font-weight:800;white-space:nowrap}
+.badge span{color:var(--gold)}
+.intro-footer{font-size:12px;color:var(--muted);margin-top:28px;line-height:1.8;max-width:420px}
+.intro-footer strong{color:var(--text)}
+#map{padding:0}
+.map-body{padding:24px 20px;max-width:1100px;margin:0 auto;width:100%}
+.map-heading{text-align:center;margin-bottom:6px;font-size:clamp(14px,3vw,26px);color:var(--gold)}
+.map-sub{text-align:center;color:var(--muted);font-size:15px;margin-bottom:32px}
+.worlds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.wcard{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:22px;cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;position:relative;overflow:hidden}
+.wcard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#22d66e08 0%,transparent 60%);opacity:0;transition:opacity .2s}
+.wcard:hover:not(.locked){transform:translateY(-5px);box-shadow:0 14px 40px #0007;border-color:var(--border2)}
+.wcard:hover:not(.locked)::before{opacity:1}
+.wcard.locked{opacity:.4;cursor:not-allowed;filter:grayscale(.7)}
+.wcard.done{border-color:var(--green)}
+.wcard-badge{position:absolute;top:14px;right:14px;font-size:11px;font-weight:900;padding:3px 10px;border-radius:50px;background:var(--surface3)}
+.wcard-badge.stars{color:var(--gold)}
+.wcard-badge.lock{font-size:18px;background:none}
+.wcard-emoji{font-size:44px;display:block;margin-bottom:10px}
+.wcard-num{font-size:9px;color:var(--muted);margin-bottom:7px}
+.wcard-name{font-size:15px;font-weight:900;margin-bottom:8px;line-height:1.35}
+.wcard-desc{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.7;font-weight:700}
+.wcard-dots{display:flex;gap:7px}
+.dot{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--muted);transition:all .2s}
+.dot.done{background:var(--green);border-color:#0e7a38;color:#021408}
+.dot.cur{background:var(--gold);border-color:#0e7a38;color:#021408;animation:pulseRing 1.8s infinite}
+#level-screen{padding:0}
+.level-wrap{max-width:780px;margin:0 auto;padding:24px 18px;width:100%}
+.level-topbar{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.level-title-badge{background:var(--surface2);border:2px solid var(--border);border-radius:var(--r-sm);padding:6px 14px;font-size:9px;color:var(--gold);white-space:nowrap}
+.progress-track{flex:1;min-width:80px;height:10px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--blue),var(--gold));transition:width .5s cubic-bezier(.4,0,.2,1)}
+.card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:28px}
+.learn-tag{display:inline-block;padding:4px 14px;background:var(--blue);color:#021408;border-radius:50px;font-size:10px;font-weight:900;margin-bottom:14px}
+.learn-title{font-size:clamp(16px,2.8vw,22px);font-weight:900;margin-bottom:14px;line-height:1.35}
+.learn-body{font-size:14px;color:var(--muted);line-height:1.85;margin-bottom:18px}
+.learn-body strong{color:var(--text)}
+.concepts{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;margin:16px 0}
+.concept{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px}
+.concept-icon{font-size:26px;margin-bottom:7px}
+.concept-name{font-size:12px;font-weight:900;color:var(--gold);margin-bottom:5px}
+.concept-text{font-size:12px;color:var(--muted);line-height:1.65}
+.info-strip{background:rgba(34,214,110,.07);border:2px solid var(--gold);border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;margin-top:16px}
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.quiz-counter{font-size:12px;color:var(--muted)}
+.quiz-xp{background:var(--surface2);border:2px solid var(--gold);border-radius:50px;padding:5px 14px;font-size:12px;color:var(--gold)}
+.question{font-size:clamp(13px,2.2vw,17px);font-weight:900;margin-bottom:24px;line-height:1.55}
+.options{display:flex;flex-direction:column;gap:11px;margin-bottom:20px}
+.opt{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px 18px;text-align:left;font-size:14px;font-weight:700;color:var(--text);transition:border-color .15s,background .15s;display:flex;align-items:flex-start;gap:12px;line-height:1.55}
+.opt:hover:not(:disabled){border-color:var(--blue);background:rgba(74,234,171,.07)}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:var(--green)!important;background:rgba(34,214,110,.1)!important}
+.opt.wrong{border-color:var(--red)!important;background:rgba(255,92,92,.1)!important}
+.opt-key{min-width:28px;height:28px;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;margin-top:1px;transition:background .15s}
+.opt.correct .opt-key{background:var(--green);color:#021408}
+.opt.wrong .opt-key{background:var(--red);color:#1a0000}
+.feedback{border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;font-weight:700;display:none;margin-bottom:16px}
+.feedback.show{display:block}
+.feedback.ok{background:rgba(34,214,110,.1);border:2px solid var(--green);color:var(--green)}
+.feedback.no{background:rgba(255,92,92,.1);border:2px solid var(--red);color:var(--text)}
+#result-screen{align-items:center;justify-content:center;padding:40px 20px;background:radial-gradient(ellipse 100% 60% at 50% 50%,#0a3d1e 0%,var(--bg) 70%)}
+.result-box{background:var(--surface);border:2px solid var(--border);border-radius:20px;padding:44px 36px;text-align:center;max-width:460px;width:100%;animation:fadeUp .4s ease}
+.result-emoji{font-size:68px;display:block;animation:bounce 1.4s ease-in-out infinite;margin-bottom:14px}
+.result-title{font-size:22px;font-weight:900;color:var(--gold);margin-bottom:8px}
+.result-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+.result-stars{font-size:38px;margin-bottom:20px;letter-spacing:4px}
+.result-xp{background:rgba(34,214,110,.08);border:2px solid var(--gold);border-radius:12px;padding:14px;font-size:18px;font-weight:900;color:var(--gold);margin-bottom:28px}
+.result-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.cp{position:absolute;border-radius:2px;animation:cpFall 2.8s linear forwards}
+@keyframes cpFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+::-webkit-scrollbar{width:7px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+@media(max-width:520px){.card{padding:20px}.result-box{padding:28px 18px}}
+</style>
+</head>
+<body>
+<div id="intro" class="screen active">
+  <span class="intro-mascot">💰</span>
+  <div class="intro-title pixel">CONTABILIDADE<br>QUEST</div>
+  <div class="intro-tagline">Aprenda Gestão Financeira jogando!</div>
+  <div class="intro-badges">
+    <div class="badge">🗺️ <span>5</span> Mundos</div>
+    <div class="badge">⚔️ <span>15</span> Fases</div>
+    <div class="badge">🧠 <span>45</span> Questões</div>
+    <div class="badge">💾 Progresso Salvo</div>
+  </div>
+  <button class="btn btn-gold btn-lg" onclick="showMap()">▶ INICIAR JORNADA</button>
+  <div class="intro-footer">Conteúdo baseado no material de<br><strong>Gestão Financeira e Contabilidade</strong><br>Técnico em Administração · Educação Profissional Paulista</div>
+</div>
+<div id="map" class="screen">
+  <div class="topbar">
+    <div class="topbar-brand pixel">CONTABILIDADE QUEST</div>
+    <div class="xp-pill">🪙 <span id="xp-count">0</span> XP</div>
+  </div>
+  <div class="map-body">
+    <div class="map-heading pixel">🗺️ Mapa do Mundo</div>
+    <div class="map-sub">Escolha um mundo para explorar!</div>
+    <div class="worlds-grid" id="worlds-grid"></div>
+  </div>
+</div>
+<div id="level-screen" class="screen">
+  <div class="topbar">
+    <div class="topbar-brand pixel">CONTABILIDADE QUEST</div>
+    <div class="xp-pill">🪙 <span id="xp-count2">0</span> XP</div>
+  </div>
+  <div class="level-wrap">
+    <div class="level-topbar">
+      <button class="btn btn-ghost btn-sm" onclick="showMap()">← Mapa</button>
+      <div class="level-title-badge pixel" id="lvl-badge"></div>
+      <div class="progress-track"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    </div>
+    <div id="level-content"></div>
+  </div>
+</div>
+<div id="result-screen" class="screen">
+  <div class="result-box">
+    <span class="result-emoji" id="r-emoji">🏆</span>
+    <div class="result-title" id="r-title"></div>
+    <div class="result-sub" id="r-sub"></div>
+    <div class="result-stars" id="r-stars"></div>
+    <div class="result-xp" id="r-xp"></div>
+    <div class="result-btns">
+      <button class="btn btn-ghost btn-sm" onclick="showMap()">🗺️ Mapa</button>
+      <button class="btn btn-green btn-sm" id="r-next">Próxima Fase →</button>
+    </div>
+  </div>
+</div>
+<div id="confetti"></div>
+<script>
+const WORLDS=[
+  {id:0,emoji:'📚',color:'#22d66e',name:'Conceitos Fundamentais da Contabilidade',desc:'O que é contabilidade, seus objetivos e as normas que regem o mundo financeiro!',
+   levels:[
+    {title:'A Função da Contabilidade',sub:'Semana 1 · Aula 1',
+     learn:{tag:'📖 Conceito Base',title:'O que é Contabilidade?',
+      body:`A Contabilidade é a <strong>ciência que estuda, registra, controla e interpreta</strong> os eventos econômicos que afetam o patrimônio de uma empresa ou pessoa.<br><br>Pensa assim: é como um "diário financeiro" da empresa — tudo que entra e sai de dinheiro, tudo que ela possui e tudo que ela deve fica registrado!`,
+      concepts:[
+        {icon:'📝',name:'Registrar',text:'Anotar todas as operações financeiras da empresa de forma organizada e padronizada.'},
+        {icon:'🔍',name:'Controlar',text:'Acompanhar o que a empresa possui (bens) e o que ela deve (dívidas) em tempo real.'},
+        {icon:'📊',name:'Interpretar',text:'Transformar os números em informações úteis para quem toma decisões na empresa.'},
+        {icon:'👥',name:'Usuários Internos',text:'Donos, diretores e gerentes que usam as informações para decidir os rumos da empresa.'},
+        {icon:'🌐',name:'Usuários Externos',text:'Bancos, governo, investidores e fornecedores que precisam saber da saúde financeira.'},
+        {icon:'⚖️',name:'Patrimônio',text:'Conjunto de bens, direitos e obrigações de uma empresa em um determinado momento.'},
+      ],
+      info:'💡 Exemplo: A dona da lanchonete que conta o caixa todo dia está fazendo contabilidade básica! Saber quanto entra e sai é o primeiro passo para tomar boas decisões.'},
+     quiz:[
+      {q:'O que é Contabilidade?',opts:['Arte de fazer contas de cabeça','Ciência que estuda, registra, controla e interpreta os eventos econômicos de uma empresa','Técnica de vendas e negociação','Método de controle de estoque apenas'],ans:1,fb:'✅ Contabilidade é uma ciência completa! Ela registra, controla e interpreta tudo que afeta o patrimônio da empresa.'},
+      {q:'Quem são os "usuários internos" das informações contábeis?',opts:['Bancos e financiadores','Governo e órgãos fiscalizadores','Donos, diretores e gerentes da própria empresa','Clientes e fornecedores externos'],ans:2,fb:'✅ Os usuários internos são os próprios gestores da empresa — eles usam as informações contábeis para tomar decisões estratégicas.'},
+      {q:'O que é "patrimônio" em Contabilidade?',opts:['Apenas os imóveis da empresa','Conjunto de bens, direitos e obrigações de uma empresa','O dinheiro em caixa no momento','Somente os equipamentos de produção'],ans:1,fb:'✅ Patrimônio é o conjunto completo: o que a empresa TEM (bens e direitos) mais o que ela DEVE (obrigações). É a "foto" da situação financeira!'}
+     ]},
+    {title:'Objetivos e Importância da Contabilidade',sub:'Semana 1 · Aula 2',
+     learn:{tag:'🎯 Para que serve?',title:'Por que a Contabilidade é tão importante?',
+      body:'A Contabilidade tem <strong>objetivos claros e muito práticos</strong> para a vida das empresas. Sem ela, seria impossível saber se o negócio está crescendo, parado ou afundando!',
+      concepts:[
+        {icon:'📈',name:'Controle Financeiro',text:'Saber exatamente quanto a empresa possui, quanto deve e qual é sua situação real a qualquer momento.'},
+        {icon:'🎯',name:'Apoio à Decisão',text:'Fornecer informações precisas para que gestores tomem as melhores decisões para o negócio.'},
+        {icon:'🏛️',name:'Obrigação Legal',text:'Toda empresa é obrigada por lei a manter registros contábeis — é exigência do governo.'},
+        {icon:'🔒',name:'Transparência',text:'Mostrar para investidores, bancos e sócios a situação real e honesta da empresa.'},
+        {icon:'📋',name:'Demonstrações Contábeis',text:'Documentos como Balanço Patrimonial e DRE que mostram a situação financeira da empresa.'},
+        {icon:'⏳',name:'Histórico',text:'Guardar o histórico financeiro para comparar períodos e entender a evolução do negócio.'},
+      ],
+      info:'💡 Sem Contabilidade, é impossível saber se a empresa está tendo lucro ou prejuízo, ou se vai conseguir pagar suas contas no próximo mês!'},
+     quiz:[
+      {q:'Qual é um dos principais objetivos da Contabilidade?',opts:['Apenas cumprir obrigações com o governo','Apoiar a tomada de decisões fornecendo informações financeiras precisas','Controlar apenas as vendas da empresa','Gerenciar os recursos humanos'],ans:1,fb:'✅ O grande objetivo da Contabilidade é fornecer informações confiáveis para que gestores tomem as melhores decisões!'},
+      {q:'O que são demonstrações contábeis?',opts:['Relatórios de vendas mensais','Documentos como Balanço Patrimonial que mostram a situação financeira da empresa','Contratos com fornecedores','Documentos de admissão de funcionários'],ans:1,fb:'✅ Demonstrações contábeis são os principais documentos financeiros — mostram se a empresa tem saúde financeira boa ou ruim.'},
+      {q:'Por que todas as empresas são obrigadas a manter registros contábeis?',opts:['Por exigência legal do governo e para transparência fiscal','Apenas para controle interno de custos','Para mostrar aos clientes seus preços','Para treinar novos funcionários'],ans:0,fb:'✅ É obrigação legal! O governo exige registros contábeis para fiscalização tributária e para garantir transparência no mercado.'}
+     ]},
+    {title:'Normas e Princípios Contábeis',sub:'Semana 1 · Aula 3',
+     learn:{tag:'📏 As Regras do Jogo',title:'Por que existem normas contábeis?',
+      body:'As normas contábeis são como as <strong>regras de um jogo</strong> — garantem que todas as empresas "joguem" da mesma forma, tornando as informações financeiras comparáveis e confiáveis em todo o mundo.',
+      concepts:[
+        {icon:'🌍',name:'IFRS (Norma Internacional)',text:'International Financial Reporting Standards — padrão mundial adotado para facilitar comparações entre empresas de países diferentes.'},
+        {icon:'🇧🇷',name:'NBC (Norma Brasileira)',text:'Normas Brasileiras de Contabilidade emitidas pelo CFC — adaptações das normas internacionais para a realidade brasileira.'},
+        {icon:'⚖️',name:'Consistência',text:'Usar os mesmos métodos contábeis ao longo do tempo para que seja possível comparar períodos diferentes.'},
+        {icon:'🔍',name:'Transparência',text:'Divulgar informações claras e completas, sem omitir dados importantes para os usuários.'},
+        {icon:'📐',name:'Padronização',text:'Registrar as operações sempre da mesma forma, seguindo regras definidas por órgãos competentes.'},
+        {icon:'🛡️',name:'Confiabilidade',text:'As informações devem ser verificáveis, neutras e livres de erros materiais.'},
+      ],
+      info:'💡 Graças às normas contábeis, um investidor consegue comparar o balanço de uma empresa brasileira com uma americana — pois ambas seguem padrões similares!'},
+     quiz:[
+      {q:'O que são normas contábeis?',opts:['Preferências pessoais de cada contador','Regras que garantem que informações financeiras sejam padronizadas, consistentes e confiáveis','Técnicas avançadas de informática','Procedimentos de recursos humanos'],ans:1,fb:'✅ Normas contábeis são as regras do jogo financeiro — garantem que todas as empresas registrem suas operações de forma padronizada e comparável.'},
+      {q:'O que significa a sigla IFRS?',opts:['Instituto Financeiro de Regulação e Supervisão','International Financial Reporting Standards — padrão contábil internacional','Índice Financeiro de Resultados e Saldos','Instrução Fiscal de Registro e Saldo'],ans:1,fb:'✅ IFRS são as normas internacionais de contabilidade! Permitem comparar empresas de países diferentes usando a mesma "linguagem financeira".'},
+      {q:'Por que a consistência é importante nas normas contábeis?',opts:['Para economizar papel nas impressões','Para usar os mesmos métodos ao longo do tempo e permitir comparações entre períodos','Para facilitar o trabalho do governo','Para reduzir os custos da empresa'],ans:1,fb:'✅ Consistência garante que você compare "laranjas com laranjas" — se a empresa muda de método sempre, fica impossível saber se melhorou ou piorou!'}
+     ]}
+   ]},
+  {id:1,emoji:'📜',color:'#4aeaab',name:'Princípios Contábeis (GAAP)',desc:'As regras fundamentais que todo profissional de contabilidade precisa conhecer!',
+   levels:[
+    {title:'Princípios de Continuidade e Entidade',sub:'Semana 2 · Aula 1',
+     learn:{tag:'🏛️ Fundamentos',title:'Continuidade e Entidade: princípios básicos',
+      body:'Os princípios contábeis são as <strong>diretrizes fundamentais</strong> que orientam como registrar as informações financeiras. Vamos começar pelos dois mais básicos!',
+      concepts:[
+        {icon:'⏩',name:'Princípio da Continuidade',text:'A empresa é registrada como se fosse continuar operando indefinidamente — não como se fosse fechar amanhã.'},
+        {icon:'🏢',name:'Princípio da Entidade',text:'As finanças da empresa são SEPARADAS das finanças pessoais do dono. Dinheiro da empresa não é dinheiro do dono!'},
+        {icon:'💡',name:'Por que Continuidade?',text:'Se a empresa vai continuar, os ativos são avaliados pelo uso futuro — não pelo quanto dariam em uma venda emergencial.'},
+        {icon:'⚠️',name:'Por que Entidade?',text:'Misturar dinheiro pessoal e empresarial distorce completamente as demonstrações financeiras e pode gerar problemas legais.'},
+      ],
+      info:'⚠️ Exemplo: O dono da loja que usa o dinheiro da empresa para pagar sua escola dos filhos está VIOLANDO o princípio da entidade! Isso bagunça toda a contabilidade.'},
+     quiz:[
+      {q:'O que afirma o Princípio da Continuidade?',opts:['A empresa deve ser avaliada como se fosse fechar em breve','A empresa é registrada como se fosse operar indefinidamente no futuro','Os ativos devem ser vendidos rapidamente','O dono pode usar o dinheiro da empresa livremente'],ans:1,fb:'✅ Continuidade significa que a empresa é tratada como um negócio permanente — os ativos são avaliados pelo uso futuro, não por venda emergencial.'},
+      {q:'O Princípio da Entidade determina que:',opts:['A empresa deve ter várias filiais','As finanças da empresa devem ser completamente separadas das finanças pessoais do dono','O contador é responsável pelos impostos pessoais do dono','A empresa deve ter um único sócio'],ans:1,fb:'✅ Entidade é fundamental! Misturar dinheiro pessoal com empresarial distorce tudo. A empresa é uma "entidade" separada do seu dono.'},
+      {q:'Por que é problemático o dono usar dinheiro da empresa para despesas pessoais?',opts:['Porque o banco não permite','Porque viola o Princípio da Entidade e distorce as demonstrações financeiras','Porque aumenta o lucro da empresa','Porque reduz os impostos pagos'],ans:1,fb:'✅ Viola o Princípio da Entidade! Misturar finanças pessoais com empresariais torna impossível saber a situação real da empresa.'}
+     ]},
+    {title:'Princípios de Custo e Realização da Receita',sub:'Semana 2 · Aula 2',
+     learn:{tag:'💲 Registro de Valores',title:'Custo e Realização: como registrar?',
+      body:'Dois princípios essenciais que definem <strong>COMO e QUANDO</strong> registrar compras e receitas na contabilidade!',
+      concepts:[
+        {icon:'🏷️',name:'Princípio do Custo',text:'Os bens adquiridos são registrados pelo valor pago na compra (custo de aquisição), não pelo valor de mercado atual.'},
+        {icon:'💰',name:'Princípio da Realização',text:'A receita só é reconhecida quando efetivamente realizada — quando o produto é entregue ou o serviço prestado.'},
+        {icon:'📦',name:'Ativos pelo Custo',text:'Se comprou uma máquina por R$100.000, ela fica registrada por esse valor mesmo que valha mais ou menos hoje.'},
+        {icon:'📅',name:'Quando reconhecer?',text:'A venda é registrada quando acontece de fato — não quando o dinheiro entra na conta.'},
+      ],
+      info:'💡 Exemplo: Se você comprou um terreno por R$50.000 e hoje ele vale R$200.000, na contabilidade ele ainda aparece como R$50.000 (custo de aquisição). Isso garante consistência!'},
+     quiz:[
+      {q:'O Princípio do Custo determina que os bens devem ser registrados:',opts:['Pelo valor de mercado atual','Pelo valor que o dono acha que valem','Pelo custo de aquisição (valor pago na compra)','Pelo valor de reposição no mercado'],ans:2,fb:'✅ Princípio do Custo! Os bens são registrados pelo que você pagou, não pelo que valem hoje. Isso garante consistência e objetividade nos registros.'},
+      {q:'Quando a receita deve ser reconhecida segundo o Princípio da Realização?',opts:['Quando o pedido é feito pelo cliente','Quando o produto é entregue ou o serviço prestado (quando ocorre de fato)','Apenas quando o dinheiro entra na conta bancária','Quando a fatura é emitida'],ans:1,fb:'✅ A receita é reconhecida quando realizada — quando o produto é entregue ou o serviço prestado, independente de quando o pagamento ocorre.'},
+      {q:'Uma empresa comprou um imóvel em 2010 por R$300.000. Hoje ele vale R$800.000. Pelo Princípio do Custo, como ele aparece no balanço?',opts:['Por R$800.000 (valor de mercado atual)','Por R$550.000 (média dos dois valores)','Por R$300.000 (custo de aquisição original)','Não aparece mais pois está valorizado'],ans:2,fb:'✅ Pelo Princípio do Custo, o imóvel continua registrado por R$300.000 — o valor original pago. Isso mantém consistência e objetividade!'}
+     ]},
+    {title:'Princípios de Competência e Prudência',sub:'Semana 2 · Aula 3',
+     learn:{tag:'⚖️ Equilíbrio Contábil',title:'Competência e Prudência: registrar certo na hora certa',
+      body:'Dois princípios que garantem que os registros financeiros reflitam a <strong>realidade econômica</strong> da empresa, não apenas os movimentos de dinheiro.',
+      concepts:[
+        {icon:'📅',name:'Princípio da Competência',text:'Receitas e despesas são registradas no período em que OCORREM, não quando o dinheiro entra ou sai.'},
+        {icon:'🛡️',name:'Princípio da Prudência',text:'Em situações de dúvida, reconheça as perdas imediatamente, mas só reconheça os ganhos quando realizados.'},
+        {icon:'📊',name:'Exemplo de Competência',text:'Se prestou um serviço em dezembro mas receberá o pagamento em janeiro, a receita é de dezembro.'},
+        {icon:'⚠️',name:'Exemplo de Prudência',text:'Se há chance de um cliente não pagar, registre a possível perda agora. Se há chance de ganhar algo, espere para ter certeza.'},
+      ],
+      info:'💡 Competência garante que o resultado mensal reflita o que aconteceu naquele período. Prudência protege a empresa de superestimar ganhos futuros!'},
+     quiz:[
+      {q:'O que determina o Princípio da Competência?',opts:['Registrar apenas quando o dinheiro entrar na conta','Receitas e despesas são registradas no período em que ocorrem, não quando há fluxo de caixa','Só registrar no final do ano fiscal','Registrar apenas as operações acima de R$1.000'],ans:1,fb:'✅ Competência significa que o resultado reflete o que ACONTECEU no período — não quando o dinheiro efetivamente entrou ou saiu!'},
+      {q:'O Princípio da Prudência determina que:',opts:['Só reconheça despesas quando tiver certeza absoluta','Superestime sempre os ganhos para motivar a equipe','Reconheça perdas imediatamente mas só reconheça ganhos quando realizados','Ignore riscos futuros na contabilidade'],ans:2,fb:'✅ Prudência é conservadorismo: registre as perdas prováveis imediatamente, mas espere para reconhecer ganhos até que sejam certos.'},
+      {q:'Uma empresa prestou serviço em outubro mas só receberá o pagamento em novembro. Pelo Princípio da Competência, a receita é registrada em:',opts:['Novembro, quando o dinheiro entrar','Outubro, quando o serviço foi prestado','Dezembro, no fechamento do trimestre','Apenas quando o cliente confirmar'],ans:1,fb:'✅ Em outubro! O Princípio da Competência diz que a receita vai no mês em que o serviço foi prestado — não quando o pagamento ocorre.'}
+     ]}
+   ]},
+  {id:2,emoji:'📊',color:'#4aeaab',name:'Estrutura do Balanço Patrimonial',desc:'Entenda os ativos, passivos e patrimônio líquido — a foto financeira da empresa!',
+   levels:[
+    {title:'Ativos: Definição e Classificação',sub:'Semana 3 · Aula 1',
+     learn:{tag:'💎 O que a empresa tem',title:'O que são Ativos?',
+      body:'Ativos são <strong>tudo o que a empresa possui e controla</strong> com valor econômico — dinheiro, máquinas, estoques, prédios e até direitos como valores a receber!',
+      concepts:[
+        {icon:'💵',name:'Ativo Circulante',text:'Bens e direitos que se convertem em dinheiro em até 12 meses: caixa, estoque, clientes a receber.'},
+        {icon:'🏭',name:'Ativo Não Circulante',text:'Bens de longa duração: imóveis, máquinas e equipamentos, veículos, investimentos de longo prazo.'},
+        {icon:'⚡',name:'Liquidez',text:'Capacidade de transformar o ativo em dinheiro rapidamente. Dinheiro em caixa = máxima liquidez!'},
+        {icon:'📦',name:'Estoques',text:'Mercadorias e produtos para venda — são ativos circulantes pois serão vendidos em breve.'},
+        {icon:'🔧',name:'Imobilizado',text:'Máquinas, equipamentos e imóveis usados nas operações da empresa — são não circulantes.'},
+        {icon:'💡',name:'Intangível',text:'Ativos sem forma física mas com valor real: marcas, patentes, softwares, direitos autorais.'},
+      ],
+      info:'🔑 Regra de ouro do Balanço: ATIVO = PASSIVO + PATRIMÔNIO LÍQUIDO. Os dois lados sempre se igualam!'},
+     quiz:[
+      {q:'O que são Ativos em Contabilidade?',opts:['Apenas o dinheiro em caixa','Tudo o que a empresa possui e controla com valor econômico','Somente os equipamentos de produção','As dívidas que a empresa precisa pagar'],ans:1,fb:'✅ Ativos são todos os bens, direitos e recursos que a empresa possui — dinheiro, equipamentos, estoques, imóveis e muito mais!'},
+      {q:'Qual das alternativas é um exemplo de Ativo CIRCULANTE?',opts:['Imóvel comercial próprio','Máquinas de produção','Dinheiro em caixa e valores a receber de clientes','Marca registrada da empresa'],ans:2,fb:'✅ Dinheiro e valores a receber são ativos circulantes — se convertem em dinheiro em até 12 meses. Imóveis e máquinas são não circulantes!'},
+      {q:'O que significa "liquidez" de um ativo?',opts:['O valor de mercado do ativo','A capacidade de transformar o ativo em dinheiro rapidamente','A vida útil do equipamento','O imposto pago na compra do ativo'],ans:1,fb:'✅ Liquidez é a velocidade de conversão em dinheiro! Dinheiro em caixa tem liquidez máxima. Um imóvel tem baixa liquidez — demora para vender.'}
+     ]},
+    {title:'Passivos: Definição e Classificação',sub:'Semana 3 · Aula 2',
+     learn:{tag:'💳 O que a empresa deve',title:'O que são Passivos?',
+      body:'Passivos são as <strong>obrigações financeiras da empresa</strong> — tudo o que ela deve para terceiros: fornecedores, bancos, governo e funcionários.',
+      concepts:[
+        {icon:'⏰',name:'Passivo Circulante',text:'Dívidas e obrigações que vencem em até 12 meses: contas a pagar, salários, impostos.'},
+        {icon:'🏦',name:'Passivo Não Circulante',text:'Dívidas de longo prazo que vencem após 12 meses: empréstimos bancários, financiamentos.'},
+        {icon:'💡',name:'Por que classificar?',text:'Saber quais dívidas vencem primeiro é essencial para o planejamento do fluxo de caixa.'},
+        {icon:'📊',name:'Provisões',text:'Estimativas de obrigações futuras prováveis — como possíveis processos trabalhistas.'},
+      ],
+      info:'⚠️ Uma empresa com muitos passivos circulantes e poucos ativos circulantes pode ter problemas de pagamento em breve — essa é a análise de liquidez!'},
+     quiz:[
+      {q:'O que são Passivos em Contabilidade?',opts:['Os lucros acumulados da empresa','As obrigações financeiras que a empresa tem com terceiros','Apenas as dívidas com bancos','Os impostos pagos no ano'],ans:1,fb:'✅ Passivos são todas as obrigações da empresa — o que ela deve para fornecedores, bancos, governo, funcionários e outros credores.'},
+      {q:'O que é Passivo Circulante?',opts:['Dívidas que vencem após 12 meses','Investimentos de longo prazo','Obrigações que vencem em até 12 meses: contas a pagar, salários e impostos','O lucro do período'],ans:2,fb:'✅ Passivo Circulante são as dívidas de curto prazo — vencem em até 12 meses e precisam de atenção imediata no fluxo de caixa!'},
+      {q:'Por que é importante classificar os passivos entre circulante e não circulante?',opts:['Para impressionar os investidores','Para saber quais dívidas vencem primeiro e planejar o fluxo de caixa adequadamente','Apenas para cumprir obrigação legal','Para calcular o imposto de renda'],ans:1,fb:'✅ Saber o prazo das dívidas é vital! Passivos circulantes precisam ser pagos em breve — sem planejamento, a empresa pode ficar sem caixa.'}
+     ]},
+    {title:'Patrimônio Líquido: Composição e Importância',sub:'Semana 3 · Aula 3',
+     learn:{tag:'💚 O valor real da empresa',title:'O que é Patrimônio Líquido?',
+      body:'O Patrimônio Líquido (PL) mostra <strong>quanto vale a empresa para os seus donos</strong> — é o que sobra quando você tira todas as dívidas de tudo que a empresa tem.',
+      concepts:[
+        {icon:'🧮',name:'Fórmula do PL',text:'Patrimônio Líquido = Ativo Total − Passivo Total. É o valor que pertence aos sócios.'},
+        {icon:'💰',name:'Capital Social',text:'Valor que os sócios investiram para abrir e manter a empresa — é a "aposta inicial" dos donos.'},
+        {icon:'📈',name:'Lucros Acumulados',text:'Resultado positivo ao longo do tempo que fica na empresa — mostra crescimento e saúde financeira.'},
+        {icon:'📉',name:'Prejuízos Acumulados',text:'Quando as perdas superam os lucros — sinal de alerta vermelho para a saúde da empresa!'},
+        {icon:'🎯',name:'Reservas',text:'Parte do lucro separada para objetivos específicos, como expansão ou proteção contra imprevistos.'},
+      ],
+      info:'🎯 PL positivo e crescendo = empresa saudável. PL negativo = empresa deve mais do que possui — situação crítica que exige atenção imediata!'},
+     quiz:[
+      {q:'Como se calcula o Patrimônio Líquido?',opts:['Receita Total − Despesas Totais','Ativo Total − Passivo Total','Capital Social + Estoques','Lucro do Período × 12 meses'],ans:1,fb:'✅ PL = Ativo − Passivo! É o que "sobra" para os donos depois de pagar todas as dívidas. Mostra o valor real que pertence aos sócios.'},
+      {q:'O que é Capital Social no Patrimônio Líquido?',opts:['O capital emprestado pelos bancos','Valor que os sócios investiram para abrir e manter a empresa','O lucro do último exercício','Os impostos pagos pela empresa'],ans:1,fb:'✅ Capital Social é o investimento dos próprios sócios — é a "aposta" que fizeram na empresa. Representa a origem dos recursos próprios!'},
+      {q:'O que significa um Patrimônio Líquido NEGATIVO?',opts:['A empresa está muito lucrativa','Os donos investiram muito dinheiro','A empresa deve mais do que possui — situação financeira crítica','O estoque está muito alto'],ans:2,fb:'✅ PL negativo é sinal vermelho! Significa que as dívidas são maiores que tudo que a empresa possui — ela está tecnicamente "falida" no aspecto contábil.'}
+     ]}
+   ]},
+  {id:3,emoji:'✍️',color:'#22d66e',name:'Elaboração do Balanço Patrimonial',desc:'Aprenda a fazer o plano de contas, escrituração e os balancetes!',
+   levels:[
+    {title:'Conhecendo o Plano de Contas',sub:'Semana 4 · Aula 1',
+     learn:{tag:'🗂️ Organização Financeira',title:'O que é um Plano de Contas?',
+      body:'O plano de contas é uma <strong>lista organizada de todas as contas contábeis</strong> que a empresa usa para registrar suas operações — é o "menu" da contabilidade!',
+      concepts:[
+        {icon:'📋',name:'Definição',text:'Lista completa e organizada de todas as contas que a empresa usa para registrar suas transações financeiras.'},
+        {icon:'🔢',name:'Numeração',text:'Cada conta tem um código numérico — ex: 1 = Ativo, 1.1 = Ativo Circulante, 1.1.1 = Caixa.'},
+        {icon:'📁',name:'Grupos Principais',text:'Ativo, Passivo, Patrimônio Líquido, Receitas e Despesas — os 5 grandes grupos.'},
+        {icon:'⚙️',name:'Personalização',text:'Cada empresa adapta seu plano de contas ao seu tipo de negócio e necessidades específicas.'},
+      ],
+      info:'💡 Pensa no plano de contas como as "gavetas" onde você guarda cada tipo de informação financeira — tudo tem seu lugar certo!'},
+     quiz:[
+      {q:'O que é um Plano de Contas?',opts:['Lista dos clientes da empresa','Lista organizada de todas as contas contábeis para registrar as operações financeiras','Planejamento de vendas anuais','Relatório de despesas mensais'],ans:1,fb:'✅ Plano de Contas é o "organograma" da contabilidade — define onde cada tipo de operação será registrado, com código e nome para cada conta.'},
+      {q:'Quais são os 5 grandes grupos de um Plano de Contas?',opts:['Vendas, Compras, Estoque, Produção e Serviços','Ativo, Passivo, Patrimônio Líquido, Receitas e Despesas','Caixa, Banco, Clientes, Fornecedores e Impostos','Janeiro, Fevereiro, Março, Abril e Maio'],ans:1,fb:'✅ Os 5 grupos fundamentais são: Ativo (o que tem), Passivo (o que deve), PL (valor dos sócios), Receitas (entradas) e Despesas (saídas)!'},
+      {q:'Por que as empresas personalizam seus planos de contas?',opts:['Para confundir a fiscalização','Para adaptar à sua atividade e necessidades específicas de controle','Para economizar papel','Para usar sempre o mesmo modelo independente do negócio'],ans:1,fb:'✅ Cada empresa é única! Uma fábrica precisa de contas diferentes de uma loja ou um hospital — o plano de contas é adaptado para refletir a realidade do negócio.'}
+     ]},
+    {title:'Processo de Escrituração Contábil',sub:'Semana 4 · Aula 2',
+     learn:{tag:'✏️ Registrando as Operações',title:'Como funciona a escrituração contábil?',
+      body:'Escrituração é o <strong>processo de registrar todas as transações</strong> da empresa usando o Método das Partidas Dobradas — o método mais confiável da contabilidade!',
+      concepts:[
+        {icon:'⚖️',name:'Método das Partidas Dobradas',text:'Para cada lançamento, há SEMPRE um débito e um crédito de igual valor. O equilíbrio é obrigatório!'},
+        {icon:'📊',name:'Débito e Crédito',text:'Débito = entrada no ativo ou saída do passivo. Crédito = saída do ativo ou entrada no passivo.'},
+        {icon:'📓',name:'Livro Diário',text:'Registro cronológico de todas as operações — como um diário do dia a dia da empresa.'},
+        {icon:'📒',name:'Livro Razão',text:'Agrupa os lançamentos por conta — mostra o histórico completo de cada conta.'},
+      ],
+      info:'🎯 Exemplo: Comprou mercadoria à vista por R$500. Débito em Estoque (R$500) e Crédito em Caixa (R$500). Dois lados, mesmo valor — partidas dobradas!'},
+     quiz:[
+      {q:'O que é o Método das Partidas Dobradas?',opts:['Registrar cada operação duas vezes no mesmo livro','Para cada lançamento há sempre um débito e um crédito de igual valor','Fazer dois balanços por ano','Usar dois contadores para verificar os dados'],ans:1,fb:'✅ Partidas dobradas: todo lançamento tem débito E crédito em igual valor. Isso garante que o balanço sempre feche e facilita a identificação de erros!'},
+      {q:'O que é o Livro Diário na escrituração contábil?',opts:['Lista de clientes ordenada por data','Registro cronológico de TODAS as operações financeiras da empresa','Relatório de vendas diárias','Controle do ponto dos funcionários'],ans:1,fb:'✅ O Livro Diário é como o "diário" da empresa — registra todas as operações em ordem cronológica. É obrigatório por lei!'},
+      {q:'Ao comprar mercadoria à vista, quais contas são movimentadas no método de partidas dobradas?',opts:['Débito em Caixa e Crédito em Estoque','Débito em Estoque e Crédito em Caixa (saída de dinheiro, entrada de produto)','Apenas débito em Estoque','Crédito em Fornecedores e Débito em Caixa'],ans:1,fb:'✅ Débito em Estoque (ativo aumentou) e Crédito em Caixa (dinheiro saiu). Os dois lados têm o mesmo valor — equilíbrio garantido!'}
+     ]},
+    {title:'Demonstração de Saldos e Balancetes',sub:'Semana 4 · Aula 3',
+     learn:{tag:'🔍 Verificando os Registros',title:'O que é um Balancete?',
+      body:'O balancete é um <strong>documento de verificação</strong> que lista todas as contas com seus saldos para confirmar se os lançamentos estão corretos — antes de fechar o balanço final!',
+      concepts:[
+        {icon:'📊',name:'Balancete de Verificação',text:'Lista todas as contas com saldos devedores e credores para verificar se o total débito = total crédito.'},
+        {icon:'✅',name:'Verificação',text:'Se o total dos débitos = total dos créditos, os lançamentos estão matematicamente corretos.'},
+        {icon:'⚠️',name:'Identificação de Erros',text:'Quando os saldos não batem, há algum lançamento errado — o balancete ajuda a localizar!'},
+        {icon:'📅',name:'Periodicidade',text:'Geralmente feito mensalmente para acompanhar a situação e detectar problemas cedo.'},
+      ],
+      info:'🎯 O balancete é a "revisão antes da prova"! Ele verifica se todos os lançamentos estão certos antes de fechar o Balanço Patrimonial oficial.'},
+     quiz:[
+      {q:'O que é um Balancete de Verificação?',opts:['Um relatório de vendas mensais','Lista com saldos de todas as contas para verificar se débitos = créditos e os lançamentos estão corretos','Um resumo dos funcionários','O mesmo que o Balanço Patrimonial'],ans:1,fb:'✅ O Balancete de Verificação lista todos os saldos para checar se os lançamentos estão equilibrados. É a checagem antes do Balanço final!'},
+      {q:'Como o balancete indica que os lançamentos estão corretos?',opts:['Quando todas as contas têm saldo zero','Quando o total dos débitos é igual ao total dos créditos','Quando as receitas superam as despesas','Quando o caixa está positivo'],ans:1,fb:'✅ Débito total = Crédito total significa equilíbrio! Se os valores não batem, há algum erro nos lançamentos que precisa ser encontrado e corrigido.'},
+      {q:'Com que frequência geralmente se faz o balancete?',opts:['Apenas uma vez por ano','A cada 5 anos','Mensalmente, para acompanhar e detectar problemas cedo','Somente quando o governo pede'],ans:2,fb:'✅ Balancete mensal! Quanto mais frequente, mais rápido você detecta e corrige erros — esperar o ano todo pode significar um trabalho enorme de correção.'}
+     ]}
+   ]},
+  {id:4,emoji:'🏥',color:'#22d66e',name:'Saúde Econômico-Financeira da Empresa',desc:'Analise a saúde da empresa com indicadores de liquidez, solvência e endividamento!',
+   levels:[
+    {title:'Introdução à Saúde Financeira Empresarial',sub:'Semana 5 · Aula 1',
+     learn:{tag:'🩺 Diagnóstico Financeiro',title:'Como saber se a empresa está saudável?',
+      body:'A saúde financeira empresarial é a <strong>capacidade da empresa de honrar seus compromissos</strong> e crescer sustentavelmente. É como uma consulta médica, mas para finanças!',
+      concepts:[
+        {icon:'💚',name:'Empresa Saudável',text:'Paga suas dívidas em dia, tem caixa positivo, lucra consistentemente e tem perspectiva de crescimento.'},
+        {icon:'⚠️',name:'Alerta Amarelo',text:'Dificuldades pontuais no pagamento, margem apertada, mas ainda com capacidade de recuperação.'},
+        {icon:'🔴',name:'Situação Crítica',text:'Insolvente, não consegue pagar dívidas, patrimônio líquido negativo — risco de falência.'},
+        {icon:'📊',name:'Estrutura de Capital',text:'Como a empresa financia seus ativos — com capital próprio (dos sócios) ou capital de terceiros (dívidas).'},
+      ],
+      info:'💡 Assim como um médico usa exames para diagnosticar, o contador usa índices financeiros para diagnosticar a saúde da empresa. Vamos aprender esses índices!'},
+     quiz:[
+      {q:'O que define uma empresa financeiramente saudável?',opts:['Ter muitos funcionários','Pagar suas dívidas em dia, ter caixa positivo e lucrar consistentemente','Ter a maior fatura do setor','Ter muitos imóveis registrados'],ans:1,fb:'✅ Saúde financeira = capacidade de honrar compromissos + geração de lucro consistente + perspectiva de crescimento. É o equilíbrio entre o que entra e o que sai!'},
+      {q:'O que é estrutura de capital de uma empresa?',opts:['Organograma dos cargos da empresa','Como a empresa financia seus ativos — com capital próprio ou de terceiros (dívidas)','Lista dos equipamentos disponíveis','Estrutura física dos imóveis'],ans:1,fb:'✅ Estrutura de capital define se a empresa depende mais dos sócios ou de bancos/credores. Muita dívida = maior risco financeiro!'},
+      {q:'Qual situação indica que uma empresa está em estado crítico?',opts:['Patrimônio Líquido positivo e crescente','Fluxo de caixa equilibrado','Patrimônio Líquido negativo e incapacidade de pagar dívidas','Alta rotatividade de estoque'],ans:2,fb:'✅ PL negativo + incapacidade de pagar dívidas = situação crítica! A empresa deve mais do que possui e corre risco real de insolvência e falência.'}
+     ]},
+    {title:'Entendendo a Liquidez e a Solvência',sub:'Semana 5 · Aula 2',
+     learn:{tag:'💧 Capacidade de Pagamento',title:'Liquidez e Solvência: consegue pagar?',
+      body:'<strong>Liquidez</strong> é a capacidade de pagar dívidas de curto prazo. <strong>Solvência</strong> é a capacidade de pagar todas as dívidas no longo prazo. Ambas são essenciais para a saúde financeira!',
+      concepts:[
+        {icon:'💧',name:'Liquidez Corrente',text:'Ativo Circulante ÷ Passivo Circulante. Acima de 1 = pode pagar as dívidas de curto prazo.'},
+        {icon:'⚡',name:'Liquidez Seca',text:'(Ativo Circulante − Estoque) ÷ Passivo Circulante. Mais rigorosa — exclui o estoque.'},
+        {icon:'💰',name:'Liquidez Imediata',text:'Caixa + Bancos ÷ Passivo Circulante. Capacidade de pagar dívidas com o dinheiro disponível agora.'},
+        {icon:'🏛️',name:'Solvência Geral',text:'Ativo Total ÷ Passivo Total. Acima de 1 = a empresa pode pagar todas as dívidas no longo prazo.'},
+      ],
+      info:'📊 Regra geral: Liquidez Corrente > 1 = positivo. Entre 0,5 e 1 = atenção. Abaixo de 0,5 = problema sério de caixa!'},
+     quiz:[
+      {q:'O que mede o índice de Liquidez Corrente?',opts:['O lucro líquido do período','A capacidade de pagar dívidas de curto prazo (Ativo Circulante ÷ Passivo Circulante)','O valor dos imóveis da empresa','A rentabilidade sobre as vendas'],ans:1,fb:'✅ Liquidez Corrente = Ativo Circulante ÷ Passivo Circulante. Se for maior que 1, a empresa tem mais recursos de curto prazo do que dívidas de curto prazo — ótimo sinal!'},
+      {q:'Qual a diferença entre Liquidez e Solvência?',opts:['São a mesma coisa, apenas nomes diferentes','Liquidez é capacidade de pagar dívidas curtas; Solvência é capacidade de pagar todas as dívidas no longo prazo','Liquidez é de longo prazo; Solvência é de curto prazo','Solvência é mais importante para pequenas empresas'],ans:1,fb:'✅ Liquidez = curto prazo. Solvência = longo prazo. Uma empresa pode ser líquida (paga as contas do mês) mas insolvente (no longo prazo, as dívidas superam os ativos).'},
+      {q:'Uma empresa tem Liquidez Corrente de 0,4. O que isso significa?',opts:['Excelente situação de caixa','Para cada R$1 de dívida curta, tem apenas R$0,40 de ativo circulante — situação preocupante','A empresa tem mais ativos que passivos','Está acima da média do mercado'],ans:1,fb:'✅ Liquidez de 0,4 é preocupante! Significa que para cada R$1 que deve no curto prazo, a empresa só tem R$0,40 disponíveis — pode ter dificuldades para pagar as contas.'}
+     ]},
+    {title:'Análise de Balanço e Gestão de Endividamento',sub:'Semana 5 · Aula 3',
+     learn:{tag:'📈 Análise Avançada',title:'Como analisar o balanço e gerenciar dívidas?',
+      body:'A análise do balanço usa <strong>índices e comparações</strong> para entender profundamente a situação financeira. A gestão do endividamento define estratégias para manter as dívidas em nível saudável.',
+      concepts:[
+        {icon:'📊',name:'Análise Vertical',text:'Calcula o percentual de cada conta em relação ao total — mostra a composição do balanço.'},
+        {icon:'📈',name:'Análise Horizontal',text:'Compara os valores entre períodos diferentes — mostra a evolução da empresa ao longo do tempo.'},
+        {icon:'💳',name:'Grau de Endividamento',text:'Passivo Total ÷ Ativo Total. Mostra quanto % dos ativos é financiado por dívidas. Quanto menor, melhor!'},
+        {icon:'🎯',name:'Gestão do Endividamento',text:'Estratégias para manter as dívidas controladas: refinanciar, renegociar prazos, reduzir custos.'},
+      ],
+      info:'🎯 Uma empresa com 30% de endividamento é muito mais segura do que uma com 90%. A gestão inteligente do endividamento é fundamental para a saúde financeira!'},
+     quiz:[
+      {q:'O que é Análise Horizontal do Balanço?',opts:['Comparar contas de diferentes empresas','Comparar os valores da mesma empresa entre diferentes períodos para ver sua evolução','Analisar apenas o lado do ativo','Comparar com a média do setor'],ans:1,fb:'✅ Análise Horizontal compara períodos diferentes da mesma empresa — permite ver se está crescendo, estagnada ou regredindo ao longo do tempo!'},
+      {q:'O que indica o Grau de Endividamento?',opts:['A lucratividade da empresa','Quanto % dos ativos é financiado por dívidas (Passivo Total ÷ Ativo Total)','O número de credores','A qualidade dos produtos'],ans:1,fb:'✅ Grau de Endividamento = Passivo ÷ Ativo. 30% = dívidas financiam 30% dos ativos (saudável). 90% = empresa muito alavancada e arriscada!'},
+      {q:'Qual é uma boa estratégia de gestão de endividamento?',opts:['Contrair mais dívidas para crescer rapidamente sem avaliar a capacidade','Refinanciar dívidas caras, renegociar prazos e reduzir custos operacionais','Ignorar as dívidas e focar apenas nas vendas','Nunca fazer dívidas, mesmo perdendo oportunidades de crescimento'],ans:1,fb:'✅ Gestão inteligente: refinanciar o que está caro, renegociar prazos quando necessário e reduzir custos. O objetivo é manter o endividamento em nível sustentável!'}
+     ]}
+   ]}
+];
+const SAVE_KEY='cq_save_v1';
+let S=loadState();
+function defaultState(){return{xp:0,progress:[0,0,0,0,0],stars:[[],[],[],[],[]]}}
+function loadState(){try{const r=localStorage.getItem(SAVE_KEY);if(r)return JSON.parse(r)}catch(e){}return defaultState()}
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
+let CW=0,CL=0,qIdx=0,qScore=0;
+function $id(id){return document.getElementById(id)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$id(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
+function setXP(){$id('xp-count').textContent=S.xp;$id('xp-count2').textContent=S.xp}
+function setProg(p){$id('prog').style.width=p+'%'}
+function showMap(){renderMap();showScreen('map');setXP()}
+function renderMap(){
+  const grid=$id('worlds-grid');grid.innerHTML='';
+  WORLDS.forEach((w,wi)=>{
+    const done=S.progress[wi],total=w.levels.length;
+    const locked=wi>0&&S.progress[wi-1]<WORLDS[wi-1].levels.length;
+    const completed=done>=total;
+    const starTotal=(S.stars[wi]||[]).reduce((a,b)=>a+b,0);
+    const card=document.createElement('div');
+    card.className='wcard'+(locked?' locked':'')+(completed?' done':'');
+    let badge=locked?'<div class="wcard-badge lock">🔒</div>':completed?`<div class="wcard-badge stars">⭐ ${starTotal}/${total*3}</div>`:'';
+    const dots=w.levels.map((_,li)=>{const d=li<done,c=li===done&&!locked;return`<div class="dot ${d?'done':c?'cur':''}">${d?'✓':li+1}</div>`}).join('');
+    card.innerHTML=`${badge}<span class="wcard-emoji">${w.emoji}</span><div class="wcard-num pixel">MUNDO ${wi+1}</div><div class="wcard-name">${w.name}</div><div class="wcard-desc">${w.desc}</div><div class="wcard-dots">${dots}</div>`;
+    if(!locked)card.onclick=()=>enterWorld(wi);
+    grid.appendChild(card);
+  });
+}
+function enterWorld(wi){CW=wi;CL=Math.min(S.progress[wi],WORLDS[wi].levels.length-1);beginLevel()}
+function beginLevel(){
+  qIdx=0;qScore=0;
+  const w=WORLDS[CW],lv=w.levels[CL];
+  $id('lvl-badge').textContent=`Mundo ${CW+1} · Fase ${CL+1}/${w.levels.length}`;
+  setProg(0);showScreen('level-screen');renderLearn(lv);
+}
+function renderLearn(lv){
+  const l=lv.learn;
+  const concepts=l.concepts.map(c=>`<div class="concept"><div class="concept-icon">${c.icon}</div><div class="concept-name">${c.name}</div><div class="concept-text">${c.text}</div></div>`).join('');
+  $id('level-content').innerHTML=`<div class="card" style="animation:fadeUp .4s ease"><span class="learn-tag">${l.tag}</span><div class="learn-title">${l.title}</div><div class="learn-body">${l.body}</div><div class="concepts">${concepts}</div><div class="info-strip">${l.info}</div></div><div style="text-align:center;margin-top:20px"><button class="btn btn-blue" onclick="beginQuiz()">🎮 Iniciar Quiz →</button></div>`;
+  setProg(15);
+}
+function beginQuiz(){qIdx=0;qScore=0;renderQ()}
+function renderQ(){
+  const lv=WORLDS[CW].levels[CL],q=lv.quiz[qIdx],total=lv.quiz.length;
+  setProg(15+((qIdx/total)*85));
+  const letters=['A','B','C','D'];
+  const opts=q.opts.map((o,i)=>`<button class="opt" style="animation:slideRight .35s ease ${i*.07}s both" onclick="pick(${i})"><span class="opt-key">${letters[i]}</span>${o}</button>`).join('');
+  $id('level-content').innerHTML=`<div class="card" style="animation:fadeUp .4s ease"><div class="quiz-meta"><div class="quiz-counter">Questão ${qIdx+1} de ${total}</div><div class="quiz-xp">🪙 ${qScore*10} XP</div></div><div class="question">${q.q}</div><div class="options">${opts}</div><div class="feedback" id="fb"></div></div>`;
+}
+function pick(idx){
+  const lv=WORLDS[CW].levels[CL],q=lv.quiz[qIdx],ok=idx===q.ans;
+  document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.ans)b.classList.add('correct');else if(i===idx&&!ok)b.classList.add('wrong')});
+  const fb=$id('fb');
+  if(ok){fb.className='feedback ok show';fb.textContent=q.fb;qScore++}else{fb.className='feedback no show';fb.textContent='❌ '+q.fb}
+  setTimeout(()=>{qIdx++;if(qIdx<lv.quiz.length)renderQ();else showResult()},2300);
+}
+function showResult(){
+  const lv=WORLDS[CW].levels[CL],total=lv.quiz.length;
+  const stars=qScore===total?3:qScore>=total-1?2:qScore>=1?1:0;
+  const xpGained=stars*50+qScore*10;
+  if(!S.stars[CW])S.stars[CW]=[];
+  S.stars[CW][CL]=Math.max(stars,S.stars[CW][CL]||0);
+  if(CL>=S.progress[CW]&&stars>0)S.progress[CW]=CL+1;
+  S.xp+=xpGained;saveState();setXP();
+  const msgs={3:{e:'🏆',t:'PERFEITO!',s:'Você acertou tudo! Expert em contabilidade!'},2:{e:'🌟',t:'ÓTIMO!',s:'Quase perfeito! Você domina o conteúdo.'},1:{e:'👍',t:'BOM TRABALHO!',s:'Continue praticando para dominar mais!'},0:{e:'💪',t:'TENTE NOVAMENTE!',s:'Revise o conteúdo e tente outra vez!'}};
+  const m=msgs[stars];
+  $id('r-emoji').textContent=m.e;$id('r-title').textContent=m.t;$id('r-sub').textContent=m.s+` (${qScore}/${total} corretas)`;$id('r-stars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);$id('r-xp').textContent=`+ ${xpGained} XP ganhos!`;
+  const btn=$id('r-next'),nL=CL+1,nW=CW+1;
+  if(nL<WORLDS[CW].levels.length){btn.textContent='Próxima Fase →';btn.onclick=()=>{CL=nL;beginLevel()}}
+  else if(nW<WORLDS.length){btn.textContent='Próximo Mundo 🌍';btn.onclick=()=>{CW=nW;CL=0;beginLevel()}}
+  else{btn.textContent='🏆 Ver Conquistas';btn.onclick=showMap}
+  showScreen('result-screen');if(stars>=2)confetti();
+}
+function confetti(){
+  const c=$id('confetti');c.innerHTML='';
+  const cols=['#22d66e','#4aeaab','#a8f0c8','#fff','#22d66e99'];
+  for(let i=0;i<70;i++){const p=document.createElement('div');p.className='cp';const sz=7+Math.random()*9;p.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[Math.floor(Math.random()*cols.length)]};animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;c.appendChild(p)}
+  setTimeout(()=>c.innerHTML='',4000);
+}
+setXP();showScreen('intro');
+</script>
+</body>
+</html>
